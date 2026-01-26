@@ -1,22 +1,14 @@
-let dataBaku = [];
+let kataBaku = [];
 
 // load data kata baku
 fetch("kbbi.json")
   .then(res => res.json())
   .then(data => {
-    dataBaku = data.kata_baku;
+    kataBaku = data.kata_baku.map(k => k.toLowerCase());
   })
   .catch(err => {
-    console.error("Gagal memuat data kata baku:", err);
+    console.error("Gagal memuat data:", err);
   });
-
-function normalisasiKata(kata) {
-  return kata
-    .toLowerCase()
-    .replace(/[^a-z\-]/g, "")
-    .replace(/^(di|ke|se|ber|me|mem|men|meng|meny|pe|per)/, "")
-    .replace(/(kan|an|nya|lah|kah|pun)$/,"");
-}
 
 function cekTeks() {
   const input = document.getElementById("inputText").value;
@@ -31,38 +23,52 @@ function cekTeks() {
     return;
   }
 
-  const kataAsli = input
+  const kataInput = input
     .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
+    .replace(/[^\w\s]/g, "")
     .split(/\s+/);
 
-  let salah = [];
+  const imbuhanRegex = /^(di|ke|se|me|be|pe|ter|ber|mem|men|meng|meny|per|peng|pen|pem).+|.+(kan|an|i)$/;
 
-  kataAsli.forEach(kata => {
-    const dasar = normalisasiKata(kata);
+  let benar = [];
+  let imbuhan = [];
+  let tidakDiketahui = [];
 
-    if (dasar && !dataBaku.includes(dasar)) {
-      salah.push({
-        asli: kata,
-        dasar: dasar
-      });
+  kataInput.forEach(kata => {
+    if (kataBaku.includes(kata)) {
+      benar.push(kata);
+    } else if (imbuhanRegex.test(kata)) {
+      imbuhan.push(kata);
+    } else {
+      tidakDiketahui.push(kata);
     }
   });
 
-  if (salah.length === 0) {
-    hasilDiv.innerHTML = "✅ Teks sudah sesuai kosakata baku Bahasa Indonesia.";
-    return;
-  }
+  // hasil ringkas
+  hasilDiv.innerHTML = `
+    ✅ Kata baku terdeteksi: ${benar.length}<br>
+    ⚠️ Kata berimbuhan: ${imbuhan.length}<br>
+    ❌ Kata tidak terdaftar: ${tidakDiketahui.length}
+  `;
 
-  hasilDiv.innerHTML = `❌ Ditemukan ${salah.length} kata yang tidak sesuai kosakata baku:`;
-
-  salah.forEach(item => {
+  // detail
+  imbuhan.forEach(kata => {
     const div = document.createElement("div");
     div.className = "daftar-item";
     div.innerHTML = `
-      <strong>${item.asli}</strong>
-      <br>
-      Bentuk dasar terbaca: <em>${item.dasar}</em>
+      ⚠️ <strong>${kata}</strong><br>
+      Kata ini mengandung imbuhan. Sistem saat ini hanya memeriksa kata dasar,
+      sehingga kebenaran kata ini <b>belum dapat ditentukan</b>.
+    `;
+    daftarDiv.appendChild(div);
+  });
+
+  tidakDiketahui.forEach(kata => {
+    const div = document.createElement("div");
+    div.className = "daftar-item";
+    div.innerHTML = `
+      ❌ <strong>${kata}</strong><br>
+      Kata ini tidak ditemukan dalam daftar kata baku.
     `;
     daftarDiv.appendChild(div);
   });
