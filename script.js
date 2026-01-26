@@ -1,13 +1,22 @@
-let dataBahasa = {};
+let dataBaku = [];
 
-fetch("data.json")
+// load data kata baku
+fetch("kbbi.json")
   .then(res => res.json())
   .then(data => {
-    dataBahasa = data;
+    dataBaku = data.kata_baku;
   })
   .catch(err => {
-    console.error("Gagal memuat data bahasa:", err);
+    console.error("Gagal memuat data kata baku:", err);
   });
+
+function normalisasiKata(kata) {
+  return kata
+    .toLowerCase()
+    .replace(/[^a-z\-]/g, "")
+    .replace(/^(di|ke|se|ber|me|mem|men|meng|meny|pe|per)/, "")
+    .replace(/(kan|an|nya|lah|kah|pun)$/,"");
+}
 
 function cekTeks() {
   const input = document.getElementById("inputText").value;
@@ -18,40 +27,42 @@ function cekTeks() {
   daftarDiv.innerHTML = "";
 
   if (!input.trim()) {
-    hasilDiv.innerHTML = "⚠️ Silakan masukkan teks terlebih dahulu.";
+    hasilDiv.innerHTML = "⚠️ Masukkan teks terlebih dahulu.";
     return;
   }
 
-  const kataInput = input
+  const kataAsli = input
     .toLowerCase()
-    .replace(/[^\w\s]/g, "")
+    .replace(/[^\w\s-]/g, "")
     .split(/\s+/);
 
-  let temuan = [];
+  let salah = [];
 
-  for (const [formal, informalList] of Object.entries(dataBahasa)) {
-    informalList.forEach(informal => {
-      if (kataInput.includes(informal)) {
-        temuan.push({
-          informal,
-          formal
-        });
-      }
-    });
-  }
+  kataAsli.forEach(kata => {
+    const dasar = normalisasiKata(kata);
 
-  if (temuan.length === 0) {
-    hasilDiv.innerHTML = "✅ Teks sudah sesuai dengan ragam bahasa formal.";
+    if (dasar && !dataBaku.includes(dasar)) {
+      salah.push({
+        asli: kata,
+        dasar: dasar
+      });
+    }
+  });
+
+  if (salah.length === 0) {
+    hasilDiv.innerHTML = "✅ Teks sudah sesuai kosakata baku Bahasa Indonesia.";
     return;
   }
 
-  hasilDiv.innerHTML = "❌ Teks belum sepenuhnya sesuai ragam bahasa formal.";
+  hasilDiv.innerHTML = `❌ Ditemukan ${salah.length} kata yang tidak sesuai kosakata baku:`;
 
-  temuan.forEach(item => {
+  salah.forEach(item => {
     const div = document.createElement("div");
     div.className = "daftar-item";
     div.innerHTML = `
-      <strong>${item.informal}</strong> → ${item.formal}
+      <strong>${item.asli}</strong>
+      <br>
+      Bentuk dasar terbaca: <em>${item.dasar}</em>
     `;
     daftarDiv.appendChild(div);
   });
