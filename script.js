@@ -1,75 +1,45 @@
 let kataBaku = [];
 
-// load data kata baku
+// autocorrect sederhana (opsional)
+const autoCorrect = {
+  "aku": "saya",
+  "ga": "tidak",
+  "gak": "tidak",
+  "nggak": "tidak",
+  "gpp": "tidak apa-apa",
+  "makasih": "terima kasih",
+  "mksh": "terima kasih",
+  "yg": "yang"
+};
+
+// load kbbi.json
 fetch("kbbi.json")
   .then(res => res.json())
   .then(data => {
-    kataBaku = data.kata_baku.map(k => k.toLowerCase());
-  })
-  .catch(err => {
-    console.error("Gagal memuat data:", err);
+    kataBaku = data.kata_baku;
   });
 
-function cekTeks() {
-  const input = document.getElementById("inputText").value;
-  const hasilDiv = document.getElementById("hasil");
-  const daftarDiv = document.getElementById("daftar");
+function proses() {
+  const input = document.getElementById("input").value.toLowerCase();
+  const words = input.match(/\b[\w-]+\b/g) || [];
 
-  hasilDiv.innerHTML = "";
-  daftarDiv.innerHTML = "";
+  let hasil = [];
 
-  if (!input.trim()) {
-    hasilDiv.innerHTML = "⚠️ Masukkan teks terlebih dahulu.";
-    return;
-  }
-
-  const kataInput = input
-    .toLowerCase()
-    .replace(/[^\w\s]/g, "")
-    .split(/\s+/);
-
-  const imbuhanRegex = /^(di|ke|se|me|be|pe|ter|ber|mem|men|meng|meny|per|peng|pen|pem).+|.+(kan|an|i)$/;
-
-  let benar = [];
-  let imbuhan = [];
-  let tidakDiketahui = [];
-
-  kataInput.forEach(kata => {
-    if (kataBaku.includes(kata)) {
-      benar.push(kata);
-    } else if (imbuhanRegex.test(kata)) {
-      imbuhan.push(kata);
+  words.forEach(word => {
+    if (kataBaku.includes(word)) {
+      hasil.push(word);
+    } else if (autoCorrect[word]) {
+      hasil.push(autoCorrect[word]);
     } else {
-      tidakDiketahui.push(kata);
+      hasil.push(`[${word}]`);
     }
   });
 
-  // hasil ringkas
-  hasilDiv.innerHTML = `
-    ✅ Kata baku terdeteksi: ${benar.length}<br>
-    ⚠️ Kata berimbuhan: ${imbuhan.length}<br>
-    ❌ Kata tidak terdaftar: ${tidakDiketahui.length}
-  `;
+  document.getElementById("output").value = hasil.join(" ");
+}
 
-  // detail
-  imbuhan.forEach(kata => {
-    const div = document.createElement("div");
-    div.className = "daftar-item";
-    div.innerHTML = `
-      ⚠️ <strong>${kata}</strong><br>
-      Kata ini mengandung imbuhan. Sistem saat ini hanya memeriksa kata dasar,
-      sehingga kebenaran kata ini <b>belum dapat ditentukan</b>.
-    `;
-    daftarDiv.appendChild(div);
-  });
-
-  tidakDiketahui.forEach(kata => {
-    const div = document.createElement("div");
-    div.className = "daftar-item";
-    div.innerHTML = `
-      ❌ <strong>${kata}</strong><br>
-      Kata ini tidak ditemukan dalam daftar kata baku.
-    `;
-    daftarDiv.appendChild(div);
-  });
+function salin() {
+  const output = document.getElementById("output");
+  output.select();
+  document.execCommand("copy");
 }
