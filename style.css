@@ -114,3 +114,31 @@ button:active {
 .daftar-item strong {
   color: #6a5acd;
 }
+/* ===== tambahan fitur hasil & salin ===== */
+
+#outputText {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid #ddd;
+  resize: none;
+  font-size: 14px;
+  background: #faf9ff;
+}
+
+.copy-btn {
+  margin-top: 10px;
+  background: linear-gradient(135deg, #9ad0ff, #c6b7ff);
+  box-shadow: 0 8px 20px rgba(150, 120, 255, 0.35);
+}
+
+.copy-btn:hover {
+  transform: translateY(-2px);
+}
+
+.hint {
+  font-size: 12px;
+  color: #777;
+  margin-top: 6px;
+}
