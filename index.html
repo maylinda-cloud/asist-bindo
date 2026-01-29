@@ -3,27 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>Asisten Bahasa Indonesia</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="container">
-    <h1>🌸 Asisten Bahasa Indonesia</h1>
-    <p class="subtitle">
-      Membantu menyesuaikan penggunaan bahasa Indonesia agar lebih formal dan tepat
-    </p>
+  <h1>Asisten Bahasa Indonesia</h1>
+  <p>Cek kata tidak baku dan salin hasil perbaikannya.</p>
 
-    <textarea 
-      id="inputText" 
-      placeholder="Contoh: aku gpp ga ngerti tp makasih ya..."
-    ></textarea>
+  <textarea id="inputText" placeholder="Masukkan teks di sini..."></textarea>
 
-    <button onclick="cekTeks()">🔍 Cek Bahasa</button>
+  <button onclick="cekTeks()">Periksa</button>
 
-    <div id="hasil" class="hasil"></div>
-    <div id="daftar" class="daftar"></div>
-  </div>
+  <h3>Hasil Perbaikan</h3>
+  <textarea id="outputText" readonly placeholder="Hasil akan muncul di sini..."></textarea>
+
+  <button onclick="salinHasil()">Salin Hasil</button>
+
+  <p class="info">
+    ℹ️ Kata dalam <b>[tanda kurung]</b> tidak ditemukan dalam daftar kata baku.
+  </p>
 
   <script src="script.js"></script>
 </body>
