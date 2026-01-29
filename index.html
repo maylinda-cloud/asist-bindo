@@ -7,21 +7,26 @@
 </head>
 <body>
 
-  <h1>Asisten Bahasa Indonesia</h1>
-  <p>Cek kata tidak baku dan salin hasil perbaikannya.</p>
+  <div class="card">
+    <h1>Asisten Bahasa Indonesia</h1>
+    <p class="subtitle">
+      Membantu mendeteksi kata tidak baku secara sederhana.
+    </p>
 
-  <textarea id="inputText" placeholder="Masukkan teks di sini..."></textarea>
+    <label>Masukkan teks</label>
+    <textarea id="inputText" placeholder="Contoh: aku gpp kok, makasih yaa"></textarea>
 
-  <button onclick="cekTeks()">Periksa</button>
+    <button onclick="cekTeks()">Periksa Teks</button>
 
-  <h3>Hasil Perbaikan</h3>
-  <textarea id="outputText" readonly placeholder="Hasil akan muncul di sini..."></textarea>
+    <label>Hasil perbaikan</label>
+    <textarea id="outputText" readonly placeholder="Hasil akan muncul di sini..."></textarea>
 
-  <button onclick="salinHasil()">Salin Hasil</button>
+    <button class="secondary" onclick="salinHasil()">Salin Hasil</button>
 
-  <p class="info">
-    ℹ️ Kata dalam <b>[tanda kurung]</b> tidak ditemukan dalam daftar kata baku.
-  </p>
+    <p class="info">
+      🔵 Kata dalam <b>[tanda kurung]</b> tidak ditemukan dalam daftar kata baku.
+    </p>
+  </div>
 
   <script src="script.js"></script>
 </body>
