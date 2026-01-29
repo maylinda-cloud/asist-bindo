@@ -1,45 +1,58 @@
 let kataBaku = [];
 
-// autocorrect sederhana (opsional)
-const autoCorrect = {
-  "aku": "saya",
-  "ga": "tidak",
-  "gak": "tidak",
-  "nggak": "tidak",
-  "gpp": "tidak apa-apa",
-  "makasih": "terima kasih",
-  "mksh": "terima kasih",
-  "yg": "yang"
-};
-
-// load kbbi.json
+// load data kata baku
 fetch("kbbi.json")
   .then(res => res.json())
   .then(data => {
-    kataBaku = data.kata_baku;
+    kataBaku = data.kata_baku.map(k => k.toLowerCase());
   });
 
-function proses() {
-  const input = document.getElementById("input").value.toLowerCase();
-  const words = input.match(/\b[\w-]+\b/g) || [];
+function cekTeks() {
+  const input = document.getElementById("inputText").value.trim();
+  const hasilDiv = document.getElementById("hasil");
 
-  let hasil = [];
+  if (!input) {
+    hasilDiv.innerHTML = "⚠️ Masukkan teks terlebih dahulu.";
+    return;
+  }
 
-  words.forEach(word => {
-    if (kataBaku.includes(word)) {
-      hasil.push(word);
-    } else if (autoCorrect[word]) {
-      hasil.push(autoCorrect[word]);
+  const kataInput = input
+    .toLowerCase()
+    .replace(/[^\w\s]/g, "")
+    .split(/\s+/);
+
+  let hasilKata = [];
+  let tidakBaku = [];
+
+  kataInput.forEach(kata => {
+    if (kataBaku.includes(kata)) {
+      hasilKata.push(kata);
     } else {
-      hasil.push(`[${word}]`);
+      hasilKata.push(kata); // biarkan, tidak dipaksa salah
+      tidakBaku.push(kata);
     }
   });
 
-  document.getElementById("output").value = hasil.join(" ");
+  const hasilTeks = hasilKata.join(" ");
+
+  hasilDiv.innerHTML = `
+    <div class="daftar-item">
+      <strong>✨ Versi teks yang dapat digunakan:</strong>
+      <textarea id="outputText" readonly>${hasilTeks}</textarea>
+      <button onclick="salinHasil()">📋 Salin Teks</button>
+    </div>
+
+    <div class="daftar-item">
+      <strong>ℹ️ Catatan:</strong><br>
+      Beberapa kata mungkin tidak terdaftar dalam sistem.
+      Sistem ini berfokus membantu, bukan menyalahkan.
+    </div>
+  `;
 }
 
-function salin() {
-  const output = document.getElementById("output");
-  output.select();
+function salinHasil() {
+  const text = document.getElementById("outputText");
+  text.select();
   document.execCommand("copy");
+  alert("✅ Teks berhasil disalin!");
 }
