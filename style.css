@@ -142,3 +142,30 @@ button:active {
   color: #777;
   margin-top: 6px;
 }
+button.secondary {
+  margin-top: 8px;
+  background: #ece6ff;
+  color: #6a5acd;
+  box-shadow: none;
+}
+
+button.secondary:hover {
+  background: #ddd2ff;
+}
+
+.info {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+}
+/* alias: card = container */
+.card {
+  background: rgba(255, 255, 255, 0.92);
+  width: 92%;
+  max-width: 440px;
+  padding: 22px;
+  border-radius: 22px;
+  box-shadow: 0 20px 40px rgba(120, 100, 200, 0.25);
+  backdrop-filter: blur(6px);
+}
